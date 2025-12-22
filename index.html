@@ -6,10 +6,7 @@
 <title>Adilla Glamour</title>
 
 <style>
-  * {
-    box-sizing: border-box;
-    font-family: 'Arial', sans-serif;
-  }
+  * { box-sizing: border-box; font-family: Arial, sans-serif; }
 
   body {
     margin: 0;
@@ -21,8 +18,8 @@
   }
 
   .container {
-    width: 100%;
     max-width: 420px;
+    width: 100%;
     background: #fffaf3;
     border-radius: 22px;
     overflow: hidden;
@@ -30,28 +27,23 @@
     text-align: center;
   }
 
-  /* IMAGEM DO TOPO */
   .top-image {
-    width: 100%;
     height: 220px;
-    background-image: url("topo.jpg");
-    background-size: cover;
-    background-position: center;
+    background: url("topo.jpg") center/cover no-repeat;
   }
 
   .content {
     padding: 25px 20px 32px;
   }
 
-  /* LOGO */
   .logo img {
     max-width: 160px;
     margin-bottom: 10px;
   }
 
   .subtitle {
-    font-size: 14px;
     color: #b08a3c;
+    font-size: 14px;
     margin-bottom: 28px;
     letter-spacing: 1px;
   }
@@ -68,7 +60,7 @@
     font-size: 16px;
     font-weight: 600;
     text-decoration: none;
-    transition: all 0.3s ease;
+    transition: 0.3s;
   }
 
   .button:hover {
@@ -76,13 +68,9 @@
     color: white;
   }
 
-  .button.primary {
+  .primary {
     background: linear-gradient(135deg, #d4af37, #b8962e);
     color: white;
-  }
-
-  .button.primary:hover {
-    opacity: 0.9;
   }
 
   footer {
@@ -96,39 +84,29 @@
 <body>
 
 <div class="container">
-
-  <!-- FOTO SUPERIOR -->
   <div class="top-image"></div>
 
   <div class="content">
-
-    <!-- LOGO -->
     <div class="logo">
       <img src="logo.png" alt="Adilla Glamour">
     </div>
 
     <div class="subtitle">Glamour que ilumina ✨</div>
 
-    <!-- BOTÕES -->
-    <a class="button primary" href="https://chat.whatsapp.com/Lh80269pvaF9UVBTA3iZH2" target="_blank">
+    <a class="button primary" href="https://wa.me/5599999999999" target="_blank">
       Entrar no grupo do WhatsApp
     </a>
 
-    <a class="button" href="https://api.whatsapp.com/send?phone=5588981037831" target="_blank">
+    <a class="button" href="https://wa.me/5599999999999" target="_blank">
       Falar com o vendedor
     </a>
 
-    <!-- NOVOS BOTÕES (MODELO) -->
-    <!--
-    <a class="button" href="#">
-      Catálogo
+    <!-- NOVO BOTÃO SORTEIO -->
+    <a class="button" href="sorteio.html">
+      🎁 Participar do Sorteio
     </a>
-    -->
 
-    <footer>
-      © Adilla Glamour
-    </footer>
-
+    <footer>© Adilla Glamour</footer>
   </div>
 </div>
 
