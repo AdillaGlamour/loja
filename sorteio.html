@@ -1,23 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorteio Adilla Glamour</title>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #fff8ef, #f2e2cc);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    padding: 15px;
+  }
+
+  .box {
+    max-width: 420px;
+    width: 100%;
+    background: #fffaf3;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    text-align: center;
+  }
+
+  h2 {
+    color: #b8962e;
+    margin-bottom: 6px;
+  }
+
+  #contador {
+    font-size: 14px;
+    font-weight: bold;
+    color: #9c7c2d;
+    margin-bottom: 16px;
+  }
+
+  input {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    border: 1px solid #d4af37;
+    font-size: 15px;
+    outline: none;
+  }
+
+  input:focus {
+    border-color: #b8962e;
+  }
+
+  button {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #d4af37, #b8962e);
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+  }
+
+  button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  #msg {
+    margin-top: 12px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #9c7c2d;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="box">
+  <h2>🎁 Sorteio Adilla Glamour</h2>
+  <div id="contador">Carregando...</div>
+
+  <input id="nome" placeholder="Seu nome completo">
+  <input id="endereco" placeholder="Seu endereço completo">
+
+  <button id="btn">Confirmar participação</button>
+  <p id="msg"></p>
+</div>
+
 <script>
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw899xcGxwayyimYfj2j-coH7z-Za_4HYByj4G6qqpFSiHl87mew2-OCLyTr_3a-baY/exec";
+document.addEventListener("DOMContentLoaded", () => {
+
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxBPTflXHvJIup9E5luNs1cw20XE7QPakr4wZjWaOK7uuSOrH86dJi7KzNXbvOwWx-R/exec";
   const LIMITE = 25;
+
+  const btn = document.getElementById("btn");
+  const contador = document.getElementById("contador");
+  const msg = document.getElementById("msg");
 
   async function atualizarContador() {
     try {
       const res = await fetch(SCRIPT_URL);
       const data = await res.json();
 
-      document.getElementById("contador").innerText =
-        `Participantes: ${data.total} / ${LIMITE}`;
+      contador.innerText = `Participantes: ${data.total} / ${LIMITE}`;
 
       if (data.total >= LIMITE) {
-        document.getElementById("btn").disabled = true;
-        document.getElementById("msg").innerText =
-          "❌ Lista encerrada. Limite atingido.";
+        btn.disabled = true;
+        msg.innerText = "❌ Lista encerrada. Limite atingido.";
       }
-    } catch (e) {
-      document.getElementById("contador").innerText =
-        "Erro ao carregar contador";
+    } catch {
+      contador.innerText = "Erro ao carregar contador";
     }
   }
 
@@ -26,8 +127,7 @@
     const endereco = document.getElementById("endereco").value.trim();
 
     if (!nome || !endereco) {
-      document.getElementById("msg").innerText =
-        "⚠️ Preencha todos os campos.";
+      msg.innerText = "⚠️ Preencha todos os campos.";
       return;
     }
 
@@ -36,23 +136,33 @@
     body.append("endereco", endereco);
 
     try {
-      await fetch(SCRIPT_URL, {
+      const res = await fetch(SCRIPT_URL, {
         method: "POST",
         body: body
       });
 
-      document.getElementById("msg").innerText =
-        "✅ Participação confirmada!";
+      const data = await res.json();
 
+      if (data.status === "duplicado") {
+        msg.innerText = "⚠️ Esse nome já está participando.";
+        return;
+      }
+
+      msg.innerText = "✅ Participação confirmada!";
       document.getElementById("nome").value = "";
       document.getElementById("endereco").value = "";
 
       atualizarContador();
     } catch {
-      document.getElementById("msg").innerText =
-        "❌ Erro ao enviar. Tente novamente.";
+      msg.innerText = "❌ Erro ao enviar. Tente novamente.";
     }
   }
 
+  btn.addEventListener("click", participar);
   atualizarContador();
+
+});
 </script>
+
+</body>
+</html>
