@@ -26,7 +26,17 @@
     text-align: center;
   }
 
-  h2 { color: #b8962e; }
+  h2 {
+    color: #b8962e;
+    margin-bottom: 5px;
+  }
+
+  #contador {
+    font-size: 14px;
+    font-weight: bold;
+    color: #9c7c2d;
+    margin-bottom: 15px;
+  }
 
   input {
     width: 100%;
@@ -34,6 +44,7 @@
     margin-bottom: 12px;
     border-radius: 12px;
     border: 1px solid #d4af37;
+    font-size: 15px;
   }
 
   button {
@@ -45,13 +56,19 @@
     font-size: 16px;
     font-weight: bold;
     border-radius: 30px;
+    cursor: pointer;
   }
 
-  #contador, #msg {
+  button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  #msg {
     margin-top: 12px;
     font-size: 14px;
-    color: #9c7c2d;
     font-weight: bold;
+    color: #9c7c2d;
   }
 </style>
 </head>
@@ -60,34 +77,42 @@
 
 <div class="box">
   <h2>🎁 Sorteio Adilla Glamour</h2>
-  <p id="contador"></p>
+  <div id="contador">Carregando...</div>
 
   <input id="nome" placeholder="Seu nome completo">
   <input id="endereco" placeholder="Seu endereço completo">
 
-  <button onclick="participar()">Confirmar participação</button>
+  <button id="btn" onclick="participar()">Confirmar participação</button>
   <p id="msg"></p>
 </div>
 
 <script>
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw899xcGxwayyimYfj2j-coH7z-Za_4HYByj4G6qqpFSiHl87mew2-OCLyTr_3a-baY/exec";
   const LIMITE = 25;
-  let participantes = JSON.parse(localStorage.getItem("participantes")) || [];
 
-  function atualizar() {
-    document.getElementById("contador").innerText =
-      `Participantes: ${participantes.length} / ${LIMITE}`;
+  async function atualizarContador() {
+    try {
+      const res = await fetch(SCRIPT_URL);
+      const data = await res.json();
+
+      document.getElementById("contador").innerText =
+        `Participantes: ${data.total} / ${LIMITE}`;
+
+      if (data.total >= LIMITE) {
+        document.getElementById("btn").disabled = true;
+        document.getElementById("msg").innerText =
+          "❌ Lista encerrada. Limite atingido.";
+      }
+    } catch (e) {
+      document.getElementById("contador").innerText =
+        "Erro ao carregar contador";
+    }
   }
 
-  function participar() {
+  async function participar() {
     if (localStorage.getItem("jaParticipou")) {
       document.getElementById("msg").innerText =
         "⚠️ Você já está participando.";
-      return;
-    }
-
-    if (participantes.length >= LIMITE) {
-      document.getElementById("msg").innerText =
-        "❌ Sorteio encerrado.";
       return;
     }
 
@@ -100,17 +125,29 @@
       return;
     }
 
-    participantes.push({ nome, endereco });
-    localStorage.setItem("participantes", JSON.stringify(participantes));
-    localStorage.setItem("jaParticipou", "true");
+    const body = new URLSearchParams();
+    body.append("nome", nome);
+    body.append("endereco", endereco);
 
-    document.getElementById("msg").innerText =
-      "✅ Participação confirmada! Boa sorte 🍀";
+    try {
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        body: body
+      });
 
-    atualizar();
+      localStorage.setItem("jaParticipou", "true");
+
+      document.getElementById("msg").innerText =
+        "✅ Participação confirmada!";
+
+      atualizarContador();
+    } catch {
+      document.getElementById("msg").innerText =
+        "❌ Erro ao enviar. Tente novamente.";
+    }
   }
 
-  atualizar();
+  atualizarContador();
 </script>
 
 </body>
